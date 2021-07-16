@@ -1,5 +1,6 @@
 package com.kryptokrauts.analytics.cron;
 
+import com.google.common.base.Splitter;
 import com.kryptokrauts.analytics.AnalyticsReportService;
 import com.kryptokrauts.analytics.ReportType;
 import com.kryptokrauts.discord.Channel;
@@ -24,7 +25,9 @@ public class AnalyticsReportJob {
       stringBuilder.append(yesterdayStats);
       stringBuilder.append(System.lineSeparator());
       stringBuilder.append(last7DaysStats);
-      discordPostingService.sendMessage(Channel.STATISTICS_AENALYTICS, stringBuilder.toString());
+      Iterable<String> messages = Splitter.fixedLength(2000).split(stringBuilder.toString());
+      messages.forEach(
+          msg -> discordPostingService.sendMessage(Channel.STATISTICS_AENALYTICS, msg));
     } catch (Exception e) {
       discordPostingService.sendMessage(
           Channel.STATISTICS_AENALYTICS, "Error generating stats report: " + e.getMessage());
